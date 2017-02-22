@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+    <ui:composition template="_template.xhtml">
+        <ui:define name="header">
+            Selecionar Produtos
+        </ui:define>
+        <ui:define name="content">
+            <h:messages id="messages" />
+            <h:form>
+                <fieldset>
+                    <legend>Dados dos produtos</legend>
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="Produto"/>
+                        <h:outputLabel value="Quantidade"/>
+                        <h:selectOneMenu value="#{carrinhoDeComprasBean.produtoId}">
+                            <f:selectItems value="#{produtoBean.produtos}" var="produto"
+                                           itemLabel="#{produto.marca} #{produto.decricao} - R$ #{produto.preco}"
+                                           itemValue="#{produto.id}" />
+                        </h:selectOneMenu>
+                        <h:inputText id="qdteProduto" value="#{carrinhoDeComprasBean.item.qtdeProduto}" validator="#{carrinhoDeComprasBean.validaQtdeProdutos}"/>
+                        <h:commandButton value="Inserir Produto" action="#{carrinhoDeComprasBean.gravar}" >
+                            <f:ajax execute="@form" render="@form frmCarrinho :messages" /> 
+                        </h:commandButton>
+                    </h:panelGrid>
+                </fieldset>
+            </h:form>
+            <h2>Carrinho de Compras</h2>
+            <h:form id="frmCarrinho" >
+                <h:dataTable id="lstCarrinho" value="#{carrinhoDeComprasBean.carrinho.itens}" var="item" border="1">
+                    <h:column>
+                        <f:facet name="header">
+                            Produto
+                        </f:facet>
+                        <h:outputText value="#{item.produto.marca} #{item.produto.decricao}" />
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            Quantidade
+                        </f:facet>
+                        <h:outputText value="#{item.qtdeProduto}" />
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            Valor Unitário
+                        </f:facet>
+                        <h:outputText value="#{item.produto.preco}" >
+                            <f:convertNumber type="currency" pattern="R$ #0.00" locale="pt_BR" currencySymbol="R$" />
+                        </h:outputText>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            Valor Total do Produto
+                        </f:facet>
+                        <h:outputText value="#{item.valorTotalProduto}"  >
+                            <f:convertNumber type="currency" pattern="R$ #0.00" locale="pt_BR" currencySymbol="R$" />
+                        </h:outputText>
+                    </h:column>
+                    <h:column>
+                        <h:commandLink value="Remover [X]" action="#{carrinhoDeComprasBean.remover(item)}">
+                            <f:ajax execute="@form" render="@form :messages" />
+                        </h:commandLink>
+                    </h:column>
+                </h:dataTable>
+                <h3>
+                    Total do Carrinho: => <h:outputText value="#{carrinhoDeComprasBean.totalCarrinho}"  >
+                        <f:convertNumber type="currency" pattern="R$ #0.00" currencySymbol="R$" locale="pt_BR" />
+                    </h:outputText>
+                </h3>
+                <h:commandButton value="Continuar comprando" />
+                <h:commandButton value="Finalizar compra" />
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>

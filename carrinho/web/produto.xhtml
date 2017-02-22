@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+    <ui:composition template="_template.xhtml">
+        <ui:define name="header" >
+            Novo Produto
+        </ui:define>
+        <ui:define name="content">
+            <h:messages id="messages" />
+            <h:form>
+                <fieldset>
+                    <legend>Dados do Produto</legend>
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="Descrição: " for="descricao" /> 
+                        <h:inputText id="descricao" value="#{produtoBean.produto.decricao}" required="true" requiredMessage="Descrição do produto obrigatória." 
+                                     validatorMessage="A descrição deve conter pelo menos 3 caracteres.">
+                            <f:validateLength minimum="3" />
+                            <f:ajax event="blur" render=":messages" />
+                        </h:inputText>
+                        <h:outputLabel value="Marca: " for="marca" /> 
+                        <h:inputText id="marca" value="#{produtoBean.produto.marca}" required="true" requiredMessage="Marca do produto obrigatória." />
+                        <h:outputLabel value="Preço: R$ " for="preco" /> 
+                        <h:inputText id="preco" value="#{produtoBean.produto.preco}" validator="#{produtoBean.validaPrecoMaiorZero}">
+                            <f:convertNumber type="currency" pattern="#0.00" currencySymbol="R$" locale="pt_BR" />
+                        </h:inputText>
+                        <h:commandButton value="Salvar" action="#{produtoBean.salvar}" >
+                            <f:ajax execute="@form" render="@form :tblProdutos :messages" />
+                        </h:commandButton>
+                    </h:panelGrid>
+                </fieldset>
+            </h:form>
+
+            <h2>Lista dos Produtos</h2>
+            <h:dataTable value="#{produtoBean.produtos}" var="produto" border="1" id="tblProdutos">
+                <h:column>
+                    <f:facet name="header">
+                        ID
+                    </f:facet>
+                    <h:outputText value="#{produto.id}" />
+                </h:column>
+                <h:column>
+                    <f:facet name="header">
+                        Produto
+                    </f:facet>
+                    <h:outputText value="#{produto.marca} #{produto.decricao}" />
+                </h:column>
+                <h:column>
+                    <f:facet name="header">
+                        Preço
+                    </f:facet>
+                    <h:outputText value="#{produto.preco}">
+                        <f:convertNumber type="currency" pattern="R$ #0.00" currencySymbol="R$" locale="pt_BR" />
+                    </h:outputText>
+                </h:column>
+            </h:dataTable>
+        </ui:define>
+    </ui:composition>
+</html>
